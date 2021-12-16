@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% set active_page = "Pricing Tool" %}
+
+
+
+
+{% block body %}
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Price your apartment</h1>
+                    </div>
+                    <!-- Content Row -->
+                    <div class="row">
+                        <div class="col-xl-12 col-md-6 mb-4">
+                            <div class="card border-left-dark shadow h-100 py-2">
+                                <div class="card-body">
+<!--
+    surface
+    no. of rooms
+    market type = wtórny!!!
+    building type
+    floor
+    no. of floors in the building
+    windows type
+    heating
+    construction year
+    property condition
+    monthly charges
+    ownership
+-->
+                                    <!-- Selection form -->
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-xl-3 col-md-6 mb-2">
+                                                <label>Surface</label>
+                                                <select class="form-control" id="Select1">
+                                                    <option>1</option>
+                                                    <option>5</option>
+                                                    <option>20</option>
+                                                    <option>100</option>
+                                                    <option>All</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-4 col-md-6 mb-2">
+                                                <label>No. of rooms</label>
+                                                <select class="form-control" id="Select2">
+                                                    {% for i in range(1,11) %}
+                                                    <option>{{ i }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-3 col-md-6 mb-2">
+                                                <label>Building type</label>
+                                                <select class="form-control" id="Select3">
+                                                    <option>Upload to database</option>
+                                                    <option>Export to Excel</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-2 col-md-6 mb-2 align-self-end">
+
+                                                <a href=# onclick="random(); move()" class="btn btn-primary btn-icon-split btn-block">
+
+                                                    <span class="text">Price me!</span>
+                                                </a>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                    <!-- End of selection form -->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+
+
+
+    <!-- Page level custom scripts -->
+    <script src="static/js/demo/datatables-demo.js"></script>
+
+{% endblock %}
