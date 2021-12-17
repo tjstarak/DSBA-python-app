@@ -33,9 +33,10 @@
     <!-- Page level plugins -->
     <script src="{{ url_for('static', filename= 'vendor/chart.js/Chart.min.js') }}"></script>
 
+
 </head>
 
-<body id="page-top">
+<body id="page-top" >
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -55,10 +56,21 @@
             <!-- Nav Item - Dashboard -->
             <li class="nav-item {{'active' if active_page == 'Dashboard'}}">
                 <a class="nav-link" href="/index/">
-                    <i class="fas fa-fw fa-chart-area"></i>
+                    <i class="fas fa-fw fa-chart-area   "></i>
                     <span>Dashboard</span></a>
             </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+           <!-- Heading -->
+            <div class="sidebar-heading">
+                Maps
+            </div>
 
+            <li class="nav-item {{'active' if active_page == 'Map'}}">
+                <a class="nav-link" href="/map/">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Choropleth</span></a>
+            </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
 

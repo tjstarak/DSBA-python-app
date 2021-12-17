@@ -1,18 +1,81 @@
 {% extends "layout.html" %}
-{% set active_page = "Scraper" %}
 
 {% block body %}
-
 <script>
+var i = 0;
+function move() {
+  if (i == 0) {
+    i = 1;
 
-
-function showDiv() {
-   document.getElementById('spinner').style.display = "block";
-   document.getElementById('spinner_text').style.display = "block";
+    var width = 0;
+    var id = setInterval(frame, 300);
+    function frame() {
+      if (width >= 100) {
+        clearInterval(id);
+        i = 0;
+      } else {
+        width++;
+        document.getElementById("progress-bar").style.width = width + "%";
+        document.getElementById("progress-bar").innerHTML = width + "%";
+      }
+    }
+  }
+}
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
-
+var z = 0;
+function random() {
+  if (z == 0) {
+    z = 1;
+    var elem = document.getElementById("card1");
+    var number = 0;
+    var id = setInterval(frame, 20);
+    function frame() {
+      if (number >= 1000) {
+        clearInterval(id);
+        z = 0;
+      } else {
+        number++;
+        elem.innerHTML = getRandomInt(2,99);
+      }
+    }
+  }
+}
 </script>
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">User123</span>
+                                <img class="img-profile rounded-circle"
+                                    src="static/img/undraw_profile.svg">
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End of Topbar -->
+
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
@@ -27,56 +90,46 @@ function showDiv() {
                                 <div class="card-body">
 
                                     <!-- Selection form -->
-                                    <form method="POST">
+                                    <form>
                                         <div class="row">
                                             <div class="col-xl-3 col-md-6 mb-2">
-                                                <label>Number of offers</label><select class="form-control" id="number_of_offers" name="select1">
-                                                    <option value="1">1</option>
-                                                    <option value="5">5</option>
-                                                    <option value="50">50</option>
+                                                <label>Number of offers</label><select class="form-control" id="Select1">
+                                                    <option>1</option>
+                                                    <option>5</option>
+                                                    <option>20</option>
+                                                    <option>100</option>
+                                                    <option>All</option>
                                                 </select>
                                             </div>
                                             <div class="col-xl-4 col-md-6 mb-2">
-                                                <label>Sleep (in sec)</label><select class="form-control" id="sleep" name="select2">
-                                                    <option value="1">1 second</option>
-                                                    <option value="2">2 seconds</option>
-                                                    <option value="3">3 seconds</option>
-                                                    <option value="4">4 seconds</option>
-                                                    <option value="5">5 seconds</option>
-
+                                                <label>Scraping mode</label><select class="form-control" id="Select2">
+                                                    <option>Manual</option>
+                                                    <option>Automatic - once per day</option>
+                                                    <option>Automatic - once per week</option>
                                                 </select>
                                             </div>
                                             <div class="col-xl-3 col-md-6 mb-2">
-                                                <label>Save mode</label><select class="form-control" name="select3">
-                                                    <option value="database">Upload to database</option>
-                                                    <option value="excel">Export to Excel</option>
+                                                <label>Save mode</label><select class="form-control" id="Select3">
+                                                    <option>Upload to database</option>
+                                                    <option>Export to Excel</option>
                                                 </select>
                                             </div>
                                             <div class="col-xl-2 col-md-6 mb-2 align-self-end">
 
-                                                <button type="submit" onclick="showDiv()" class="btn btn-primary btn-icon-split btn-block">
+                                                <a href=# onclick="random(); move()" class="btn btn-primary btn-icon-split btn-block">
 
                                                     <span class="text">Start scraping</span>
-                                                </button>
+                                                </a>
                                                 </div>
 
                                         </div>
                                     </form>
                                     <!-- End of selection form -->
 
-                                    <!-- Spinner -->
-                                    <div class="row">
-                                        <div class="col-xl-10 col-md-6 mb-2">
-                                            <div class="d-flex align-items-right" style="padding-top:25px; padding-right:100px">
-                                                <strong id="spinner_text" style="display:none" >Scraping in progress...</strong>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-2 col-md-6 mb-2">
-                                            <div class="d-flex align-items-center" style="padding-top:25px">
-
-                                              <div class="spinner-border ml-auto" role="status" aria-hidden="true" id="spinner" style="display:none"></div>
-                                            </div>
-                                        </div>
+                                    <!-- Progress bar -->
+                                    <div style="padding-top:10px" class="mb-1">Scraping progress</div>
+                                    <div class="progress mb-2">
+                                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%"> 0%</div>
                                     </div>
 
                                 </div>
@@ -93,7 +146,7 @@ function showDiv() {
                                         <div class="col mr-2">
                                             <div  class="text-xs font-weight-bold text-dark text-uppercase mb-1">
                                                 Offers scraped</div>
-                                            <div id="card1" name="card1" class="h5 mb-0 font-weight-bold text-gray-800">1234</div>
+                                            <div id="card1" class="h5 mb-0 font-weight-bold text-gray-800">1234</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fas fa-home fa-2x text-gray-300"></i>
@@ -104,7 +157,6 @@ function showDiv() {
                         </div>
 
                         <!-- Card 2 -->
-
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
@@ -166,21 +218,144 @@ function showDiv() {
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-
-                                    {% for table in tables %}
-
-                                        {{ table|safe }}
-                                    {% endfor %}
-
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Office</th>
+                                            <th>Age</th>
+                                            <th>Start date</th>
+                                            <th>Salary</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Office</th>
+                                            <th>Age</th>
+                                            <th>Start date</th>
+                                            <th>Salary</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        <tr>
+                                            <td>Tiger Nixon</td>
+                                            <td>System Architect</td>
+                                            <td>Edinburgh</td>
+                                            <td>61</td>
+                                            <td>2011/04/25</td>
+                                            <td>$320,800</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Garrett Winters</td>
+                                            <td>Accountant</td>
+                                            <td>Tokyo</td>
+                                            <td>63</td>
+                                            <td>2011/07/25</td>
+                                            <td>$170,750</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Howard Hatfield</td>
+                                            <td>Office Manager</td>
+                                            <td>San Francisco</td>
+                                            <td>51</td>
+                                            <td>2008/12/16</td>
+                                            <td>$164,500</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hope Fuentes</td>
+                                            <td>Secretary</td>
+                                            <td>San Francisco</td>
+                                            <td>41</td>
+                                            <td>2010/02/12</td>
+                                            <td>$109,850</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Vivian Harrell</td>
+                                            <td>Financial Controller</td>
+                                            <td>San Francisco</td>
+                                            <td>62</td>
+                                            <td>2009/02/14</td>
+                                            <td>$452,500</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Timothy Mooney</td>
+                                            <td>Office Manager</td>
+                                            <td>London</td>
+                                            <td>37</td>
+                                            <td>2008/12/11</td>
+                                            <td>$136,200</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Jackson Bradshaw</td>
+                                            <td>Director</td>
+                                            <td>New York</td>
+                                            <td>65</td>
+                                            <td>2008/09/26</td>
+                                            <td>$645,750</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Olivia Liang</td>
+                                            <td>Support Engineer</td>
+                                            <td>Singapore</td>
+                                            <td>64</td>
+                                            <td>2011/02/03</td>
+                                            <td>$234,500</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Bruno Nash</td>
+                                            <td>Software Engineer</td>
+                                            <td>London</td>
+                                            <td>38</td>
+                                            <td>2011/05/03</td>
+                                            <td>$163,500</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sakura Yamamoto</td>
+                                            <td>Support Engineer</td>
+                                            <td>Tokyo</td>
+                                            <td>37</td>
+                                            <td>2009/08/19</td>
+                                            <td>$139,575</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Thor Walton</td>
+                                            <td>Developer</td>
+                                            <td>New York</td>
+                                            <td>61</td>
+                                            <td>2013/08/11</td>
+                                            <td>$98,540</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Michael Bruce</td>
+                                            <td>Javascript Developer</td>
+                                            <td>Singapore</td>
+                                            <td>29</td>
+                                            <td>2011/06/27</td>
+                                            <td>$183,000</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Donna Snider</td>
+                                            <td>Customer Support</td>
+                                            <td>New York</td>
+                                            <td>27</td>
+                                            <td>2011/01/25</td>
+                                            <td>$112,000</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- /.container-fluid -->
 
-
+            </div>
+            <!-- End of Main Content -->
 
     <!-- Page level custom scripts -->
-    <script src="{{ url_for('static', filename='js/demo/datatables-demo.js') }}"></script>
+    <script src="static/js/demo/datatables-demo.js"></script>
 
 {% endblock %}

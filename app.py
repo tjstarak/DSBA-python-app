@@ -6,6 +6,8 @@ import time
 import random
 import pandas as pd
 from datetime import date
+import json
+import plotly.express as px
 
 import numpy as np
 import os
@@ -19,6 +21,78 @@ app = Flask(__name__)
 @app.route("/index/")
 def index():
     return render_template("index.html")
+
+@app.route("/map/")
+def map():
+   # Super strange method to use non embedded plotly graphs without running Dash app
+
+    # Loading both GeoJSON and data
+    f = open('static/geojson/warszawa-dzielnice.geojson', encoding='utf-8')
+    data = json.load(f)
+
+
+    df = pd.read_csv("database/dane_map.csv", dtype={"name": str})
+
+   # Plotting Plotly Choropleth map
+    fig = px.choropleth_mapbox(df, geojson=data, locations='name', featureidkey="properties.name", color='value',
+                               color_continuous_scale="turbo",
+                               range_color=(-0.2, 1),
+                               mapbox_style="carto-positron",
+                               zoom=9.0, center={"lat": 52.2402, "lon": 21.0},
+                               opacity=0.35,
+                               # Do not change width and height, it is possible down in code
+                               labels={'value': 'Value', "name": "District"},
+                               )
+
+    fig.update_traces(hovertemplate=None)
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, hovermode="x")
+
+   # Instead of running dash app, current plot is saved as HTML, then some tags like <head> and <body>
+   # are being removed. Then navbar and other divs are being added around generated code.
+
+    fig.write_html("templates/map.html")
+
+    with open("templates/map.html", "r", encoding='utf-8') as f:
+        text = f.read()
+    f.close()
+    text = text[52:-15]
+    text = """{% extends "layout.html" %}"
+    {% set active_page = "Map" %}
+
+
+    {% block body %}
+          
+    <div class="container-fluid"> 
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Choropleth map by Warsaw district</h1>
+    </div>
+    <div class="col-xl-12 col-lg-8" >
+    <div class="card shadow mb-4">
+    <div   class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 id="abc" class="m-0 font-weight-bold text-dark"> Sale price in Warsaw by district</h6>
+    </div>
+    """ + text + """
+    
+    </div>
+
+  
+    
+    </div>
+    </div>
+    
+    {% endblock %}
+    """
+
+    # Change of height and width of plot
+    #text = text.replace('height":600', 'height":600')
+    #text = text.replace('width":1340', 'width":1340')
+
+
+    with open("templates/file_map.html", "w") as file:
+        file.write(text)
+        file.close()
+
+    return render_template("file_map.html")
 
 
 @app.route("/scraper_sale/")
