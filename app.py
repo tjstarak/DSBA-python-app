@@ -18,6 +18,7 @@ app = Flask(__name__)
 
 @app.route("/")
 #test branch
+#test pull z linii komend
 
 @app.route("/index/")
 def index():
