@@ -15,6 +15,8 @@ import os
 app = Flask(__name__)
 
 @app.route("/")
+
+@app.route("/")
 #test branch
 
 @app.route("/index/")
@@ -93,6 +95,11 @@ def map():
 
     return render_template("file_map.html")
 
+@app.route("/pricing_tool/", methods=['GET', 'POST'])
+def pricing_tool():
+    if request.method == 'POST':
+        surface = request.form['surface']
+    return render_template("pricing_tool.html")
 
 @app.route("/scraper_sale/")
 def scraper_sale():
