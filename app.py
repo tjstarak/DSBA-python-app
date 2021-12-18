@@ -94,20 +94,27 @@ def map():
 
     return render_template("file_map.html")
 
-@app.route("/pricing_tool/", methods=['GET', 'POST'])
+@app.route("/pricing_tool/", methods=['GET','POST'])
 def pricing_tool():
-    surface = 30
+    surface = None
     building_type = None
+    floor = None
+    construction_year = None
+    property_condition = None
 
     if request.method == 'POST':
         surface = request.form['surface']
         building_type = request.form['building_type']
+        floor = request.form['floor']
+        construction_year = request.form['construction_year']
+        property_condition = request.form['property_condition']
+
     try:
-        flash("Your stated surface: "+ str(surface))
-        flash("Your stated building type: "+ str(building_type))
+        flash("Surface: " + str(surface) + "; Building type: " + str(building_type) + "; Floor: " + str(floor) + "; Const. year: " + str(construction_year) + "; Property condition: " + str(property_condition))
     except NameError:
         flash("Not defined yet")
-    return render_template("pricing_tool.html", surface_default = surface)
+
+    return render_template("pricing_tool.html")
 
 @app.route("/scraper_sale/")
 def scraper_sale():

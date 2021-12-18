@@ -47,7 +47,7 @@
                                         <div class="row">
                                             <div class="col mb-2">
                                                 <label>Surface</label>
-                                                <input type="number" class="form-control" placeholder="{{surface_default}}" min="0" name="surface" value="{{request.form.surface}}">
+                                                <input type="number" class="form-control" placeholder="Surface in m2" min="0" name="surface" value="{{request.form.surface}}">
                                             </div>
                                             <div class="col mb-2">
                                                 <label>No. of rooms</label>
@@ -73,7 +73,7 @@
                                         <div class="row">
                                             <div class="col mb-2">
                                                 <label>Floor</label>
-                                                <select class="form-control" id="floor">
+                                                <select class="form-control" name="floor" value="{{request.form.floor}}">
                                                     <option>1</option>
                                                     <option>2</option>
                                                     <option>3</option>
@@ -84,11 +84,11 @@
                                             </div>                  
                                             <div class="col mb-2">                             
                                                 <label>Construction year</label>
-                                                <input type="number" class="form-control" placeholder="2000" min="1900" max="2022" id="construction_year">
+                                                <input type="number" class="form-control" placeholder="Between 1900-2022" min="1900" max="2022" name="construction_year" value="{{request.form.construction_year}}">
                                             </div>
                                             <div class="col mb-2">
                                                 <label>Property condition</label>
-                                                <select class="form-control" id="Select3">
+                                                <select class="form-control" name="property_condition" value="{{request.form.property_condition}}">
                                                     <option>do zamieszkania</option>
                                                     <option>do wykończenia</option>
                                                     <option>do remontu</option>
