@@ -17,8 +17,6 @@ app = Flask(__name__)
 @app.route("/")
 
 @app.route("/")
-#test branch
-#test pull z linii komend
 
 @app.route("/index/")
 def index():
@@ -98,9 +96,18 @@ def map():
 
 @app.route("/pricing_tool/", methods=['GET', 'POST'])
 def pricing_tool():
+    surface = 30
+    building_type = None
+
     if request.method == 'POST':
         surface = request.form['surface']
-    return render_template("pricing_tool.html")
+        building_type = request.form['building_type']
+    try:
+        flash("Your stated surface: "+ str(surface))
+        flash("Your stated building type: "+ str(building_type))
+    except NameError:
+        flash("Not defined yet")
+    return render_template("pricing_tool.html", surface_default = surface)
 
 @app.route("/scraper_sale/")
 def scraper_sale():
@@ -351,4 +358,5 @@ def scraper_rental():
 
 
 if __name__ == "__main__":
+    app.secret_key = 'secret key'
     app.run(debug=True)
