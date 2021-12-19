@@ -16,7 +16,7 @@ def get_clean_values(offers):
     price_clean = pd.to_numeric(offers["Price"].astype(str).str.replace(" ","").str.extract(pat="([0-9]+)",expand=False))
 
     # Extract surface, including decimal
-    surface_clean = pd.to_numeric(offers["Surface"].astype(str).str.replace(" ","").str.replace(",",".").str.extract(pat="(\d+\.\d*)",expand=False))
+    surface_clean = pd.to_numeric(offers["Surface"].astype(str).str.replace(" ","").str.replace(",",".").str.extract(pat="(\d+\.?\d*)",expand=False))
 
     # Extract floor, floors >10 groupped together with 10
     floor_clean = pd.to_numeric(offers["Floor"].astype(str).str.replace("parter","0",case=False).str.replace("suterena","-1",case=False).str.extract(pat="(-?\d+)",expand=False))
