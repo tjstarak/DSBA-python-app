@@ -29,7 +29,7 @@ def get_clean_values(offers):
     clean_values.loc[is_neither, "Currency"] = np.nan
 
     # Extract price, ignore decimal
-    clean_values["Price"] = pd.to_numeric(offers["Price"].astype(str).str.replace(" ","").str.extract(pat="([0-9]+)",expand=False))
+    clean_values["Price"] = pd.to_numeric(offers["Price"].astype(str).str.replace(" ","").str.extract(pat="(\d+)",expand=False))
 
     # Extract surface, including decimal
     clean_values["Surface"] = pd.to_numeric(offers["Surface"].astype(str).str.replace(" ","").str.replace(",",".").str.extract(pat="(\d+\.\d*)",expand=False))
