@@ -39,7 +39,8 @@ def get_clean_values(offers):
     clean_values["Floor"] = pd.to_numeric(offers["Floor"].astype(str).str.replace("parter","0",case=False).str.replace("suterena","-1",case=False).str.extract(pat="(-?\d+)",expand=False))
 
     clean_values["Construction year"] = pd.to_numeric(offers["Construction year"].astype(str).str.extract(pat="(\d+)",expand=False))
-
+    clean_values[clean_values["Construction year"]<1900] =np.nan
+    
     # Extract monthly charges, assume all values are in PLN, ignore decimal
     clean_values["Monthly charges"] = pd.to_numeric(offers["Monthly charges"].astype(str).str.replace(" ","").str.extract(pat="(\d+)",expand=False))
 
