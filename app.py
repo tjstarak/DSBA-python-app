@@ -14,6 +14,7 @@ import numpy as np
 import os
 
 app = Flask(__name__)
+app.secret_key = 'secret key'
 
 def get_clean_values(offers):
     
@@ -131,7 +132,7 @@ def pricing_tool():
     floor = None
     construction_year = None
     property_condition = None
-
+    app.secret_key = 'secret key'
     if request.method == 'POST':
         surface = request.form['surface']
         building_type = request.form['building_type']
@@ -395,5 +396,4 @@ def scraper_rental():
 
 
 if __name__ == "__main__":
-    app.secret_key = 'secret key'
     app.run(debug=True)
