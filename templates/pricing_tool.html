@@ -5,15 +5,26 @@
 
 
 {% block body %}
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Price your apartment</h1>
-                    </div>
-                    <!-- Content Row -->
-                    <div class="row">
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{message}}
+                <span type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+                    <span aria-hidden="true">&times;</span>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Price your apartment</h1>
+    </div>
+    <!-- Content Row -->
+    <div class="row">
                         <div class="col-xl-12 col-md-6 mb-4">
                             <div class="card border-left-dark shadow h-100 py-2">
                                 <div class="card-body">
@@ -36,7 +47,7 @@
                                         <div class="row">
                                             <div class="col mb-2">
                                                 <label>Surface</label>
-                                                <input type="number" class="form-control" placeholder="30" min="0" name="surface" value="{{request.form.surface}}">
+                                                <input type="number" class="form-control" placeholder="Surface in m2" min="0" name="surface" value="{{request.form.surface}}">
                                             </div>
                                             <div class="col mb-2">
                                                 <label>No. of rooms</label>
@@ -50,10 +61,10 @@
                                             </div>
                                             <div class="col mb-2">
                                                 <label>Building type</label>
-                                                <select class="form-control" id="building_type">
+                                                <select class="form-control" name="building_type" value="{{request.form.building_type}}">
                                                     <option>apartamentowiec</option>
-                                                    <option>test test blok</option>
-                                                    <option>test666 kamienica</option>
+                                                    <option>blok</option>
+                                                    <option>kamienica</option>
                                                     <option>szeregowiec</option>
                                                     <option>n/a</option>
                                                 </select>
@@ -62,7 +73,7 @@
                                         <div class="row">
                                             <div class="col mb-2">
                                                 <label>Floor</label>
-                                                <select class="form-control" id="floor">
+                                                <select class="form-control" name="floor" value="{{request.form.floor}}">
                                                     <option>1</option>
                                                     <option>2</option>
                                                     <option>3</option>
@@ -73,11 +84,11 @@
                                             </div>                  
                                             <div class="col mb-2">                             
                                                 <label>Construction year</label>
-                                                <input type="number" class="form-control" placeholder="2000" min="1900" max="2022" id="construction_year">
+                                                <input type="number" class="form-control" placeholder="Between 1900-2022" min="1900" max="2022" name="construction_year" value="{{request.form.construction_year}}">
                                             </div>
                                             <div class="col mb-2">
                                                 <label>Property condition</label>
-                                                <select class="form-control" id="Select3">
+                                                <select class="form-control" name="property_condition" value="{{request.form.property_condition}}">
                                                     <option>do zamieszkania</option>
                                                     <option>do wykończenia</option>
                                                     <option>do remontu</option>
@@ -105,6 +116,6 @@
 
 
     <!-- Page level custom scripts -->
-    <script src="static/js/demo/datatables-demo.js"></script>
+    <!-- <script src="static/js/demo/datatables-demo.js"></script> -->
 
 {% endblock %}
