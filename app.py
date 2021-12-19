@@ -5,6 +5,7 @@ import requests
 import time
 import random
 import pandas as pd
+import numpy as np
 from datetime import date
 import json
 import plotly.express as px
@@ -13,6 +14,35 @@ import numpy as np
 import os
 
 app = Flask(__name__)
+
+def get_clean_values(offers):
+    
+    clean_values = pd.DataFrame(np.nan,index=range(0,offers.shape[0]),columns=["Currency", "Price", "Surface", "Floor", "Construction year", "Monthly charges"])
+    
+    # Extract Currency
+    is_pln = offers["Price"].str.match(pat=".*zł",case=False,na=False)
+    is_eur = offers["Price"].str.match(pat=".*eur",case=False,na=False)
+    is_neither = ~(is_pln) & ~(is_eur)
+
+    clean_values.loc[is_pln, "Currency"] = "PLN"
+    clean_values.loc[is_eur, "Currency"] = "EUR"
+    clean_values.loc[is_neither, "Currency"] = np.nan
+
+    # Extract price, ignore decimal
+    clean_values["Price"] = pd.to_numeric(offers["Price"].astype(str).str.replace(" ","").str.extract(pat="([0-9]+)",expand=False))
+
+    # Extract surface, including decimal
+    clean_values["Surface"] = pd.to_numeric(offers["Surface"].astype(str).str.replace(" ","").str.replace(",",".").str.extract(pat="(\d+\.\d*)",expand=False))
+
+    # Extract floor, floors >10 groupped together with 10
+    clean_values["Floor"] = pd.to_numeric(offers["Floor"].astype(str).str.replace("parter","0",case=False).str.replace("suterena","-1",case=False).str.extract(pat="(-?\d+)",expand=False))
+
+    clean_values["Construction year"] = pd.to_numeric(offers["Construction year"].astype(str).str.extract(pat="(\d+)",expand=False))
+
+    # Extract monthly charges, assume all values are in PLN, ignore decimal
+    clean_values["Monthly charges"] = pd.to_numeric(offers["Monthly charges"].astype(str).str.replace(" ","").str.extract(pat="(\d+)",expand=False))
+
+    return clean_values
 
 @app.route("/")
 
