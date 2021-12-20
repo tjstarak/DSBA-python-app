@@ -13,6 +13,48 @@ import numpy as np
 import os
 
 app = Flask(__name__)
+
+
+def get_clean_values(offers):
+    clean_values = pd.DataFrame(np.nan, index=range(0, offers.shape[0]),
+                                columns=["Currency", "Price", "Surface", "Floor", "Construction year",
+                                         "Monthly charges"])
+
+    # Extract Currency
+    is_pln = offers["Price"].str.match(pat=".*zł", case=False, na=False)
+    is_eur = offers["Price"].str.match(pat=".*eur", case=False, na=False)
+    is_neither = ~(is_pln) & ~(is_eur)
+
+    clean_values.loc[is_pln, "Currency"] = "PLN"
+    clean_values.loc[is_eur, "Currency"] = "EUR"
+    clean_values.loc[is_neither, "Currency"] = np.nan
+
+    # Extract price, ignore decimal
+    clean_values["Price"] = pd.to_numeric(
+        offers["Price"].astype(str).str.replace(" ", "").str.extract(pat="(\d+)", expand=False))
+
+    # Extract surface, including decimal
+    clean_values["Surface"] = pd.to_numeric(
+        offers["Surface"].astype(str).str.replace(" ", "").str.replace(",", ".").str.extract(pat="(\d+\.?\d*)",
+                                                                                             expand=False))
+
+    # Extract floor, floors >10 groupped together with 10
+    clean_values["Floor"] = pd.to_numeric(
+        offers["Floor"].astype(str).str.replace("parter", "0", case=False).str.replace("suterena", "-1",
+                                                                                       case=False).str.extract(
+            pat="(-?\d+)", expand=False))
+
+    clean_values["Construction year"] = pd.to_numeric(
+        offers["Construction year"].astype(str).str.extract(pat="(\d+)", expand=False))
+    clean_values[clean_values["Construction year"] < 1900] = np.nan
+
+    # Extract monthly charges, assume all values are in PLN, ignore decimal
+    clean_values["Monthly charges"] = pd.to_numeric(
+        offers["Monthly charges"].astype(str).str.replace(" ", "").str.extract(pat="(\d+)", expand=False))
+
+    return clean_values
+
+
 @app.route("/")
 
 
@@ -157,7 +199,7 @@ def scraper_rental():
                          scraped_construction_year, scraped_finish_condition, scraped_monthly_charge,
                          scraped_ownership_type]
 
-        # Pagination loop, for now page number is hard coded
+
         for page in range(number_of_pages):
 
             starting_url = "https://www.otodom.pl/pl/oferty/sprzedaz/mieszkanie/warszawa?description=do+zamieszkania&priceMin=10000&distanceRadius=0&market=ALL&page=" + str(number_of_pages) + "&limit=72&locations=%5Bcities_6-26%5D&by=DEFAULT&direction=DESC"
@@ -321,9 +363,16 @@ def scraper_rental():
                 else:
                     continue
 
+
+
+
+
         if save_mode == 'excel':
-            print("sdfsdfsdfsd")
+
             df.to_csv('Scraped_data.xlsx.csv', encoding='utf-8-sig')
+
+
+
 
     return render_template("scraper_rental.html",
                            tables=[df.to_html(justify="right",
