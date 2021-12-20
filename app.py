@@ -18,7 +18,7 @@ app.secret_key = 'secret key'
 
 def get_clean_values(offers):
     
-    clean_values = pd.DataFrame(np.nan,index=range(0,offers.shape[0]),columns=["Currency", "Price", "Surface", "Floor", "Construction year", "Monthly charges"])
+    clean_values = pd.DataFrame(np.nan,index=range(0,offers.shape[0]),columns=["Currency", "Price", "Surface", "Floor", "Construction year", "Monthly charges", "Adress"])
     
     # Extract Currency
     is_pln = offers["Price"].str.match(pat=".*zł",case=False,na=False)
@@ -38,11 +38,15 @@ def get_clean_values(offers):
     # Extract floor, floors >10 groupped together with 10
     clean_values["Floor"] = pd.to_numeric(offers["Floor"].astype(str).str.replace("parter","0",case=False).str.replace("suterena","-1",case=False).str.extract(pat="(-?\d+)",expand=False))
 
+    # Extract construction year, assume construction year before 1900 is invalid
     clean_values["Construction year"] = pd.to_numeric(offers["Construction year"].astype(str).str.extract(pat="(\d+)",expand=False))
     clean_values[clean_values["Construction year"]<1900] =np.nan
     
     # Extract monthly charges, assume all values are in PLN, ignore decimal
     clean_values["Monthly charges"] = pd.to_numeric(offers["Monthly charges"].astype(str).str.replace(" ","").str.extract(pat="(\d+)",expand=False))
+
+    # Extract district
+    clean_values["District"] = offers["Adress"].astype(str).str.replace(" ","").str.extract(pat="\,(.*?)\,",expand=False)
 
     return clean_values
 
