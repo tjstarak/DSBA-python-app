@@ -93,7 +93,7 @@ function showDiv() {
                                         <div class="col mr-2">
                                             <div  class="text-xs font-weight-bold text-dark text-uppercase mb-1">
                                                 Offers scraped</div>
-                                            <div id="card1" name="card1" class="h5 mb-0 font-weight-bold text-gray-800">1234</div>
+                                            <div id="card1" name="card1" class="h5 mb-0 font-weight-bold text-gray-800">{{df_offers_scraped}}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fas fa-home fa-2x text-gray-300"></i>
@@ -111,8 +111,8 @@ function showDiv() {
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                                Average monthly price </div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800"> 1234 PLN</div>
+                                                Average price </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"> PLN {{price_mean}} ths</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -129,8 +129,8 @@ function showDiv() {
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                                Unique districts</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                                                Average surface</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{surface_mean}} m2</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fas fa-home fa-2x text-gray-300"></i>
@@ -147,8 +147,8 @@ function showDiv() {
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                                Average surface</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">45 m2</div>
+                                                Average construction year</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{construction_year_mean}}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>

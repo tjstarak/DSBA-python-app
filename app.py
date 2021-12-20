@@ -138,7 +138,9 @@ def scraper_sale():
 
 @app.route("/scraper_rental/", methods=['GET', 'POST'])
 def scraper_rental():
-
+    price_mean = 0
+    surface_mean = 0
+    construction_year_mean = 0
 
     # Create the pandas DataFrame
     df = pd.DataFrame( columns=['Price',
@@ -363,8 +365,13 @@ def scraper_rental():
                 else:
                     continue
 
-
-
+        # Cleaning scraped data
+        df_clean = get_clean_values(df)
+        df_offers_scraped = len(df_clean.index).astype(int)
+        price_mean = df_clean['Price'].mean()/1000
+        price_mean = price_mean.astype(int)
+        surface_mean = df_clean['Surface'].mean().astype(int)
+        construction_year_mean = df_clean['Construction year'].mean().astype(int)
 
 
         if save_mode == 'excel':
@@ -380,7 +387,13 @@ def scraper_rental():
                                    table_id='dataTables',
                                    render_links=True,
                                    index=False,
-                                   col_space = "200px").replace('<td>', '<td align="right">')])
+                                   col_space = "200px").replace('<td>', '<td align="right">')],
+                           price_mean=price_mean,
+                           surface_mean=surface_mean,
+                           construction_year_mean=construction_year_mean,
+                           df_offers_scraped=df_offers_scraped
+
+                           )
 
 
 
