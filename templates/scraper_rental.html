@@ -1,0 +1,186 @@
+{% extends "layout.html" %}
+{% set active_page = "Scraper" %}
+
+{% block body %}
+
+<script>
+
+
+function showDiv() {
+   document.getElementById('spinner').style.display = "block";
+   document.getElementById('spinner_text').style.display = "block";
+}
+
+
+</script>
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Scraper | Rental apartments</h1>
+                    </div>
+                    <!-- Content Row -->
+                    <div class="row">
+                        <div class="col-xl-12 col-md-6 mb-4">
+                            <div class="card border-left-dark shadow h-100 py-2">
+                                <div class="card-body">
+
+                                    <!-- Selection form -->
+                                    <form method="POST">
+                                        <div class="row">
+                                            <div class="col-xl-3 col-md-6 mb-2">
+                                                <label>Number of offers</label><select class="form-control" id="number_of_offers" name="select1">
+                                                    <option value="1">1</option>
+                                                    <option value="5">5</option>
+                                                    <option value="50">50</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-4 col-md-6 mb-2">
+                                                <label>Sleep (in sec)</label><select class="form-control" id="sleep" name="select2">
+                                                    <option value="1">1 second</option>
+                                                    <option value="2">2 seconds</option>
+                                                    <option value="3">3 seconds</option>
+                                                    <option value="4">4 seconds</option>
+                                                    <option value="5">5 seconds</option>
+
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-3 col-md-6 mb-2">
+                                                <label>Save mode</label><select class="form-control" name="select3">
+                                                    <option value="database">Upload to database</option>
+                                                    <option value="excel">Export to Excel</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-2 col-md-6 mb-2 align-self-end">
+
+                                                <button type="submit" onclick="showDiv()" class="btn btn-primary btn-icon-split btn-block">
+
+                                                    <span class="text">Start scraping</span>
+                                                </button>
+                                                </div>
+
+                                        </div>
+                                    </form>
+                                    <!-- End of selection form -->
+
+                                    <!-- Spinner -->
+                                    <div class="row">
+                                        <div class="col-xl-10 col-md-6 mb-2">
+                                            <div class="d-flex align-items-right" style="padding-top:25px; padding-right:100px">
+                                                <strong id="spinner_text" style="display:none" >Scraping in progress...</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-2 col-md-6 mb-2">
+                                            <div class="d-flex align-items-center" style="padding-top:25px">
+
+                                              <div class="spinner-border ml-auto" role="status" aria-hidden="true" id="spinner" style="display:none"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Content Row -->
+                    <div class="row">
+                        <!-- Card 1 -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div  class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                                Offers scraped</div>
+                                            <div id="card1" name="card1" class="h5 mb-0 font-weight-bold text-gray-800">1234</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fas fa-home fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                                Average monthly price </div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"> 1234 PLN</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                                Unique districts</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">3</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fas fa-home fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                                Average surface</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">45 m2</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DataTable -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Scraped offers</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+
+                                    {% for table in tables %}
+
+                                        {{ table|safe }}
+                                    {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+
+
+
+    <!-- Page level custom scripts -->
+    <script src="{{ url_for('static', filename='js/demo/datatables-demo.js') }}"></script>
+
+{% endblock %}

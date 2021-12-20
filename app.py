@@ -38,7 +38,6 @@ def map():
                                mapbox_style="carto-positron",
                                zoom=9.0, center={"lat": 52.2402, "lon": 21.0},
                                opacity=0.35,
-                               # Do not change width and height, it is possible down in code
                                labels={'value': 'Value', "name": "District"},
                                )
 
@@ -56,28 +55,20 @@ def map():
     text = text[52:-15]
     text = """{% extends "layout.html" %}"
     {% set active_page = "Map" %}
-
-
     {% block body %}
-          
     <div class="container-fluid"> 
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Choropleth map by Warsaw district</h1>
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Choropleth map by Warsaw district</h1>
+        </div>
+        <div class="col-xl-12 col-lg-8" >
+            <div class="card shadow mb-4">
+                <div   class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 id="abc" class="m-0 font-weight-bold text-dark"> Sale price in Warsaw by district</h6>
+                </div>
+                """ + text + """
+            </div> 
+      </div>
     </div>
-    <div class="col-xl-12 col-lg-8" >
-    <div class="card shadow mb-4">
-    <div   class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-    <h6 id="abc" class="m-0 font-weight-bold text-dark"> Sale price in Warsaw by district</h6>
-    </div>
-    """ + text + """
-    
-    </div>
-
-  
-    
-    </div>
-    </div>
-    
     {% endblock %}
     """
 
