@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import requests
 import time
 import random
-import pandas as pd
 from datetime import date
 import json
 import plotly.express as px
@@ -141,26 +140,29 @@ def scraper_rental():
     price_mean = 0
     surface_mean = 0
     construction_year_mean = 0
+    df_offers_scraped = 0
+    save_mode = "database"
+    download_file= "na"
 
     # Create the pandas DataFrame
     df = pd.DataFrame( columns=['Price',
-                             'Title',
-                             'Adress',
-                             'Offer number',
-                             'Surface',
-                             'Number of rooms',
-                             'Market type',
-                             'Building type',
-                             'Floor',
-                             'Number of floors in building',
-                             'Windows type',
-                             'Heating type',
-                             'Construction year',
-                             'Property condition',
-                             'Monthly charges',
-                             'Ownership',
-                             'Scraping date',
-                             'Links'])
+                                'Title',
+                                 'Adress',
+                                 'Offer number',
+                                 'Surface',
+                                 'Number of rooms',
+                                 'Market type',
+                                 'Building type',
+                                 'Floor',
+                                 'Number of floors in building',
+                                 'Windows type',
+                                 'Heating type',
+                                 'Construction year',
+                                 'Property condition',
+                                 'Monthly charges',
+                                 'Ownership',
+                                 'Scraping date',
+                                 'Links'])
 
     #Executed after button click
     if request.method == "POST":
@@ -353,8 +355,6 @@ def scraper_rental():
                              'Links'])
 
 
-
-
                 # Waiting before next page request
 
                 offers_to_scrape_current = offers_to_scrape_current + 1
@@ -366,18 +366,22 @@ def scraper_rental():
                     continue
 
         # Cleaning scraped data
-        df_clean = get_clean_values(df)
-        df_offers_scraped = len(df_clean.index).astype(int)
-        price_mean = df_clean['Price'].mean()/1000
-        price_mean = price_mean.astype(int)
-        surface_mean = df_clean['Surface'].mean().astype(int)
-        construction_year_mean = df_clean['Construction year'].mean().astype(int)
-
+        try:
+            df_clean = get_clean_values(df)
+            df_offers_scraped = round(len(df_clean.index))
+            price_mean = round(df_clean['Price'].mean()/1000)
+            surface_mean = round(df_clean['Surface'].mean())
+            construction_year_mean = round(df_clean['Construction year'].mean())
+        except:
+            pass
 
         if save_mode == 'excel':
 
-            df.to_csv('Scraped_data.xlsx.csv', encoding='utf-8-sig')
-
+            download_file = 'static/temp/data.xlsx.csv'
+            try:
+                os.remove(download_file)
+            finally:
+                df.to_csv(r'static/temp/data.xlsx.csv', encoding='utf-8-sig')
 
 
 
@@ -387,16 +391,15 @@ def scraper_rental():
                                    table_id='dataTables',
                                    render_links=True,
                                    index=False,
-                                   col_space = "200px").replace('<td>', '<td align="right">')],
+                                   col_space="200px").replace('<td>', '<td align="right">')],
                            price_mean=price_mean,
                            surface_mean=surface_mean,
                            construction_year_mean=construction_year_mean,
-                           df_offers_scraped=df_offers_scraped
+                           df_offers_scraped=df_offers_scraped,
+                           save_mode=save_mode,
+                           download_file=download_file
 
                            )
-
-
-
 
 
 if __name__ == "__main__":
