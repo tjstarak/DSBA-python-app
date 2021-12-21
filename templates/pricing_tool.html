@@ -45,20 +45,37 @@
                                     <!-- Selection form -->
                                     <form method="post">
                                         <div class="row">
-                                            <div class="col mb-2">
+                                            <div class="col mb-3">
                                                 <label>Surface</label>
-                                                <input type="number" class="form-control" placeholder="Surface in m2" min="0" name="surface" value="{{request.form.surface}}">
+                                                <input type="number" class="form-control" placeholder="in m2" min="0" name="surface" value="{{request.form.surface}}">
                                             </div>
-                                            <div class="col mb-2">
+                                            <div class="col mb-3">
                                                 <label>No. of rooms</label>
-                                                <select class="form-control" id="rooms">
+                                                <select class="form-control" name="rooms" value="{{request.form.rooms}}">
                                                     {% for i in range(1,6) %}
                                                     <option>{{ i }}</option>
                                                     {% endfor %}
-                                                    <option>>5</option>
+                                                    <option>6+</option>
                                                     <option>n/a</option>
                                                 </select>
                                             </div>
+                                            <div class="col mb-3">
+                                                <label>Floor</label>
+                                                <select class="form-control" name="floor" value="{{request.form.floor}}">
+                                                    <option>1</option>
+                                                    <option>2</option>
+                                                    <option>3</option>
+                                                    <option>4</option>
+                                                    <option>5</option>
+                                                    <option>6+</option>
+                                                </select>
+                                            </div>        
+                                            <div class="col mb-3">
+                                                <label>Monthly charges</label>
+                                                <input type="number" class="form-control" placeholder="in PLN" min="0" name="monthly_charges" value="{{request.form.monthly_charges}}">
+                                            </div>            
+                                        </div>
+                                        <div class="row">
                                             <div class="col mb-2">
                                                 <label>Building type</label>
                                                 <select class="form-control" name="building_type" value="{{request.form.building_type}}">
@@ -69,22 +86,9 @@
                                                     <option>n/a</option>
                                                 </select>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col mb-2">
-                                                <label>Floor</label>
-                                                <select class="form-control" name="floor" value="{{request.form.floor}}">
-                                                    <option>1</option>
-                                                    <option>2</option>
-                                                    <option>3</option>
-                                                    <option>4</option>
-                                                    <option>5</option>
-                                                    <option>>5</option>
-                                                </select>
-                                            </div>                  
                                             <div class="col mb-2">                             
                                                 <label>Construction year</label>
-                                                <input type="number" class="form-control" placeholder="Between 1900-2022" min="1900" max="2022" name="construction_year" value="{{request.form.construction_year}}">
+                                                <input type="number" class="form-control" placeholder="between 1900-2022" min="1900" max="2022" name="construction_year" value="{{request.form.construction_year}}">
                                             </div>
                                             <div class="col mb-2">
                                                 <label>Property condition</label>
