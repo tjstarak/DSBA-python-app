@@ -5,50 +5,17 @@ import requests
 import time
 import random
 import pandas as pd
-import numpy as np
 from datetime import date
 import json
 import plotly.express as px
-
-import numpy as np
 import os
+
+import apt_valuation as apt
+from apt_valuation import get_clean_values
 
 app = Flask(__name__)
 app.secret_key = 'secret key'
 
-def get_clean_values(offers):
-    
-    clean_values = pd.DataFrame(np.nan,index=range(0,offers.shape[0]),columns=["Currency", "Price", "Surface", "Floor", "Construction year", "Monthly charges", "Adress"])
-    
-    # Extract Currency
-    is_pln = offers["Price"].str.match(pat=".*zł",case=False,na=False)
-    is_eur = offers["Price"].str.match(pat=".*eur",case=False,na=False)
-    is_neither = ~(is_pln) & ~(is_eur)
-
-    clean_values.loc[is_pln, "Currency"] = "PLN"
-    clean_values.loc[is_eur, "Currency"] = "EUR"
-    clean_values.loc[is_neither, "Currency"] = np.nan
-
-    # Extract price, ignore decimal
-    clean_values["Price"] = pd.to_numeric(offers["Price"].astype(str).str.replace(" ","").str.extract(pat="(\d+)",expand=False))
-
-    # Extract surface, including decimal
-    clean_values["Surface"] = pd.to_numeric(offers["Surface"].astype(str).str.replace(" ","").str.replace(",",".").str.extract(pat="(\d+\.?\d*)",expand=False))
-
-    # Extract floor, floors >10 groupped together with 10
-    clean_values["Floor"] = pd.to_numeric(offers["Floor"].astype(str).str.replace("parter","0",case=False).str.replace("suterena","-1",case=False).str.extract(pat="(-?\d+)",expand=False))
-
-    # Extract construction year, assume construction year before 1900 is invalid
-    clean_values["Construction year"] = pd.to_numeric(offers["Construction year"].astype(str).str.extract(pat="(\d+)",expand=False))
-    clean_values[clean_values["Construction year"]<1900] =np.nan
-    
-    # Extract monthly charges, assume all values are in PLN, ignore decimal
-    clean_values["Monthly charges"] = pd.to_numeric(offers["Monthly charges"].astype(str).str.replace(" ","").str.extract(pat="(\d+)",expand=False))
-
-    # Extract district
-    clean_values["District"] = offers["Adress"].astype(str).str.replace(" ","").str.extract(pat="\,(.*?)\,",expand=False)
-
-    return clean_values
 
 @app.route("/")
 
@@ -132,23 +99,18 @@ def map():
 
 @app.route("/pricing_tool/", methods=['GET','POST'])
 def pricing_tool():
-    surface = None
-    building_type = None
-    floor = None
-    construction_year = None
-    property_condition = None
-    app.secret_key = 'secret key'
+    params = ['surface', 'building_type', 'floor', 'construction_year', 'property_condition', 'rooms']
+    apt_params = { key : None for key in params}
+    
     if request.method == 'POST':
-        surface = request.form['surface']
-        building_type = request.form['building_type']
-        floor = request.form['floor']
-        construction_year = request.form['construction_year']
-        property_condition = request.form['property_condition']
-
-    try:
-        flash("Surface: " + str(surface) + "; Building type: " + str(building_type) + "; Floor: " + str(floor) + "; Const. year: " + str(construction_year) + "; Property condition: " + str(property_condition))
-    except NameError:
-        flash("Not defined yet")
+        apt_params = { key : request.form[key] for key in params}
+        print(apt_params)
+        try:
+            valuation_model = apt.load_model('path/to/model')
+        except BaseException:
+            valuation_model = apt.load_model('path/to/backup/model')
+        valuation = apt.value_apartment(apt_params, valuation_model)
+        flash(f"Valuation is : {valuation}")
 
     return render_template("pricing_tool.html")
 
