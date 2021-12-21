@@ -99,18 +99,24 @@ def map():
 
 @app.route("/pricing_tool/", methods=['GET','POST'])
 def pricing_tool():
-    params = ['surface', 'building_type', 'floor', 'construction_year', 'property_condition', 'rooms']
+    params = ['surface', 'building_type', 'floor', 'construction_year', 'property_condition', 'rooms', 'monthly_charges']
+    model_params = ['Surface', 'Building type', 'Floor', 'Construction year', 'Property conditions', 'Number of rooms', 'Monthly charges']
+
     apt_params = { key : None for key in params}
-    
+    model_dict = dict(zip(model_params,params))
+
     if request.method == 'POST':
-        apt_params = { key : request.form[key] for key in params}
-        print(apt_params)
+        apt_params = { model_param : [request.form[param]] for model_param, param in model_dict.items()}
+        apt_df = pd.DataFrame.from_dict(apt_params)
+        apt_df_clean = get_clean_values(apt_df, user_input=True)
+
         try:
-            valuation_model = apt.load_model('path/to/model')
-        except BaseException:
+            valuation_model = apt.load_model("database/valuation_model.dat")
+        except OSError:
             valuation_model = apt.load_model('path/to/backup/model')
-        valuation = apt.value_apartment(apt_params, valuation_model)
-        flash(f"Valuation is : {valuation}")
+        
+        valuation = apt.value_apartment(apt_df_clean, valuation_model)
+        flash(f"Your valuation is: {valuation}")
 
     return render_template("pricing_tool.html")
 
