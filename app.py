@@ -1,5 +1,6 @@
 # coding=utf-8
 from flask import Flask, redirect, render_template, request, flash, url_for
+import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
 import requests
@@ -8,6 +9,9 @@ import random
 from datetime import date
 import json
 import plotly.express as px
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib import pyplot as plt
 import os
 
 app = Flask(__name__)
@@ -104,10 +108,13 @@ def map():
 @app.route("/pricing_tool/", methods=['GET','POST'])
 def pricing_tool():
     params = ['surface', 'building_type', 'floor', 'construction_year', 'property_condition', 'rooms', 'monthly_charges']
-    model_params = ['Surface', 'Building type', 'Floor', 'Construction year', 'Property conditions', 'Number of rooms', 'Monthly charges']
+    model_params = ['Surface', 'Building type', 'Floor', 'Construction year', 'Property condition', 'Number of rooms', 'Monthly charges']
 
     apt_params = { key : None for key in params}
     model_dict = dict(zip(model_params,params))
+
+    valuation_str = None
+    valuation_sqm_str = None
 
     if request.method == 'POST':
         apt_params = { model_param : [request.form[param]] for model_param, param in model_dict.items()}
@@ -120,10 +127,42 @@ def pricing_tool():
         except OSError:
             valuation_model = apt.load_model('path/to/backup/model')
         
-        valuation = apt.value_apartment(apt_df_clean, valuation_model)
-        flash(f"Your valuation is: {valuation}")
+        valuation = apt.value_apartment(apt_df_clean, valuation_model)[0]
+        valuation_str = f"{valuation:,.0f} zł"
+        valuation_sqm = valuation / apt_df_clean['Surface'][0]
+        valuation_sqm_str = f"{valuation_sqm:,.0f} zł"
 
-    return render_template("pricing_tool.html")
+        plt.style.use("seaborn")
+
+        database_path = os.path.join(app_root, "database/scraped_data_rental.xlsx")
+        database = apt.load_data(database_path)
+
+        plt.ioff()
+        fig, ax1 = plt.subplots()
+        ax1.hist(np.clip(database.loc[database["Building type"] == apt_df["Building type"][0],"Price per sqm"],5000,25000),density=True,bins=20)
+        ax1.title.set_text("Building type")
+        ax1.set_xlabel("Price per sqm (PLN)")
+        ax1.set_yticks([])
+        ax1.set_ylabel("Relative frequency")
+        ax1.axvline(valuation_sqm,ymax=1,color="r",linewidth=3,linestyle="--")
+
+        fig_path = os.path.join(app_root, "static/img/hist_building_type.png")
+        fig.savefig(fname=fig_path)
+        plt.close(fig)
+
+        fig, ax1 = plt.subplots()
+        ax1.hist(np.clip(database.loc[database["Property condition"] == apt_df["Property condition"][0],"Price per sqm"],5000,25000),density=True,bins=20)
+        ax1.title.set_text("Property condition")
+        ax1.set_xlabel("Price per sqm (PLN)")
+        ax1.set_yticks([])
+        ax1.set_ylabel("Relative frequency")
+        ax1.axvline(valuation_sqm,ymax=1,color="r",linewidth=3,linestyle="--")
+
+        fig_path = os.path.join(app_root, "static/img/hist_property_condition.png")
+        fig.savefig(fname=fig_path)
+        plt.close(fig)
+
+    return render_template("pricing_tool.html", valuation=valuation_str, valuation_sqm = valuation_sqm_str)
 
 @app.route("/scraper_sale/")
 def scraper_sale():
@@ -370,7 +409,14 @@ def scraper_rental():
                                    col_space = "200px").replace('<td>', '<td align="right">')])
 
 
-
+# No caching at all for API endpoints.
+@app.after_request
+def add_header(response):
+    # response.cache_control.no_store = True
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+    return response
 
 
 if __name__ == "__main__":

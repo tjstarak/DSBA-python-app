@@ -1,3 +1,4 @@
 templates/map.html
 templates/file_map.html
 database/~$scraped_data_rental.xlsx
+__pycache__/apt_valuation.cpython-39.pyc
