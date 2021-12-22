@@ -16,6 +16,7 @@ from apt_valuation import get_clean_values
 app = Flask(__name__)
 app.secret_key = 'secret key'
 
+app_root =  os.path.realpath(os.path.dirname(__file__))
 
 @app.route("/")
 
@@ -28,13 +29,14 @@ def index():
 @app.route("/map/")
 def map():
    # Super strange method to use non embedded plotly graphs without running Dash app
-
+    districts_url = os.path.join(app_root, "static/geojson/warszawa-dzielnice.geojson")
+    map_data_url = os.path.join(app_root, "database/dane_map.csv")
     # Loading both GeoJSON and data
-    f = open('static/geojson/warszawa-dzielnice.geojson', encoding='utf-8')
+    f = open(districts_url, encoding='utf-8')
     data = json.load(f)
 
 
-    df = pd.read_csv("database/dane_map.csv", dtype={"name": str})
+    df = pd.read_csv(map_data_url, dtype={"name": str})
 
    # Plotting Plotly Choropleth map
     fig = px.choropleth_mapbox(df, geojson=data, locations='name', featureidkey="properties.name", color='value',
@@ -53,9 +55,11 @@ def map():
    # Instead of running dash app, current plot is saved as HTML, then some tags like <head> and <body>
    # are being removed. Then navbar and other divs are being added around generated code.
 
-    fig.write_html("templates/map.html")
+    map_url = os.path.join(app_root, "templates/map.html")
 
-    with open("templates/map.html", "r", encoding='utf-8') as f:
+    fig.write_html(map_url)
+
+    with open(map_url, "r", encoding='utf-8') as f:
         text = f.read()
     f.close()
     text = text[52:-15]
@@ -89,9 +93,9 @@ def map():
     # Change of height and width of plot
     #text = text.replace('height":600', 'height":600')
     #text = text.replace('width":1340', 'width":1340')
+    file_map_url = os.path.join(app_root, "templates/file_map.html")
 
-
-    with open("templates/file_map.html", "w") as file:
+    with open(file_map_url, "w") as file:
         file.write(text)
         file.close()
 
@@ -110,8 +114,9 @@ def pricing_tool():
         apt_df = pd.DataFrame.from_dict(apt_params)
         apt_df_clean = get_clean_values(apt_df, user_input=True)
 
+        model_path = os.path.join(app_root, "database/valuation_model.dat")
         try:
-            valuation_model = apt.load_model("database/valuation_model.dat")
+            valuation_model = apt.load_model(model_path)
         except OSError:
             valuation_model = apt.load_model('path/to/backup/model')
         
