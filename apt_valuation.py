@@ -1,3 +1,4 @@
+# coding=utf-8
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -95,7 +96,7 @@ def get_clean_values(offers, user_input = False):
 if __name__ == "__main__":
     offers_excel = pd.read_excel("database/scraped_data_rental.xlsx")
     offers_clean = get_clean_values(offers_excel)
-    
+
     # offers = offers_excel.merge(right=offers_clean,left_index=True,right_index=True,suffixes=(None,"_clean"))
     # offers["Price per sqm"] = offers["Price_clean"] / offers["Surface_clean"]
 
