@@ -11,11 +11,11 @@ import json
 import plotly.express as px
 import os
 
-import apt_valuation as apt
-from apt_valuation import get_clean_values
-
 app = Flask(__name__)
 app.secret_key = 'secret key'
+
+import apt_valuation as apt
+from apt_valuation import get_clean_values
 
 app_root =  os.path.realpath(os.path.dirname(__file__))
 
