@@ -1,3 +1,4 @@
+# coding=utf-8
 from flask import Flask, redirect, render_template, request, flash, url_for
 import pandas as pd
 from bs4 import BeautifulSoup
