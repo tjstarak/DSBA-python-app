@@ -11,6 +11,19 @@ from sklearn.model_selection import cross_val_score, KFold
 
 import pickle
 
+def load_data(path):
+    offers_excel = pd.read_excel(path)
+    offers_clean = get_clean_values(offers_excel)
+
+    diff_cols = offers_excel.columns.difference(offers_clean.columns)
+    offers = pd.merge(offers_excel[diff_cols], offers_clean, left_index=True, right_index=True, how="inner")
+    vars = ["Surface", "Monthly charges","Floor","Construction year","Number of rooms", "Building type", "Property condition"]
+    predicted = ["Price"]
+
+    offers2 = offers.loc[:,vars + predicted].dropna()
+    offers2["Price per sqm"] = offers2["Price"] / offers2["Surface"]
+    return offers2
+
 def train_model(dataset, indep, dep):
     Y = dataset.loc[:, dep]
     X = dataset.loc[:, indep] 

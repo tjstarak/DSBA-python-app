@@ -28,20 +28,6 @@
                         <div class="col-xl-12 col-md-6 mb-4">
                             <div class="card border-left-dark shadow h-100 py-2">
                                 <div class="card-body">
-<!--
-    surface
-    no. of rooms
-    market type = wtórny!!!
-    building type
-    floor
-    no. of floors in the building
-    windows type
-    heating
-    construction year
-    property condition
-    monthly charges
-    ownership
--->
                                     <!-- Selection form -->
                                     <form method="post">
                                         <div class="row">
@@ -79,11 +65,9 @@
                                             <div class="col mb-2">
                                                 <label>Building type</label>
                                                 <select class="form-control" name="building_type" value="{{request.form.building_type}}">
-                                                    <option>apartamentowiec</option>
                                                     <option>blok</option>
+                                                    <option>apartamentowiec</option>
                                                     <option>kamienica</option>
-                                                    <option>szeregowiec</option>
-                                                    <option>n/a</option>
                                                 </select>
                                             </div>
                                             <div class="col mb-2">                             
@@ -96,7 +80,6 @@
                                                     <option>do zamieszkania</option>
                                                     <option>do wykończenia</option>
                                                     <option>do remontu</option>
-                                                    <option>n/a</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -109,13 +92,70 @@
                                         </div>
                                     </form>
                                     <!-- End of selection form -->
-
                                 </div>
+                            </div>
+                        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+                <div class="card border-left-success shadow py-2 mb-4">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Esimated price of your apartment</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{valuation}}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-home fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- /.container-fluid -->
+                <div class="card border-left-success shadow py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Estimated price per m2</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{valuation_sqm}}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-money-bill-alt fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Your price per sqm compared to other apartments in the same building types</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <img class="img-fluid" style="width: 50rem;" src="{{ url_for('static', filename='img/hist_building_type.png') }}">
+                    </div>
+                    <!---
+                    <p>Description here</p>
+                    --->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Your price per sqm compared to other apartments with the same property condition</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <img class="img-fluid" style="width: 50rem;" src="{{ url_for('static', filename='img/hist_property_condition.png') }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- /.container-fluid -->
 
 
 
