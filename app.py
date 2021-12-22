@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 import requests
 import time
 import random
-import pandas as pd
 from datetime import date
 import json
 import plotly.express as px
