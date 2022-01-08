@@ -16,7 +16,7 @@ import os
 app = Flask(__name__)
 app.secret_key = 'secret key'
 import apt_valuation as apt
-from apt_valuation import get_clean_values
+from database import get_clean_values
 from maps import *
 
 app_root =  os.path.realpath(os.path.dirname(__file__))
