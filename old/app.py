@@ -1,5 +1,5 @@
 # coding=utf-8
-from flask import Flask, redirect, render_template, request, flash, url_for, session
+from flask import Flask, redirect, render_template, request, flash, url_for
 import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -13,16 +13,14 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import os
+
 app = Flask(__name__)
 app.secret_key = 'secret key'
+
 import apt_valuation as apt
 from apt_valuation import get_clean_values
-from maps import *
 
 app_root =  os.path.realpath(os.path.dirname(__file__))
-
-
-
 
 @app.route("/")
 
@@ -30,97 +28,81 @@ app_root =  os.path.realpath(os.path.dirname(__file__))
 
 @app.route("/index/")
 def index():
-    database_path = os.path.join(app_root, "database/scraped_data_rental.csv")
-    df = pd.read_csv(database_path)
-    df_initial = df.groupby("Market type")["Price"].count().reset_index()
-    df_initial["Price"] = df_initial["Price"]/ df_initial["Price"].sum() *100
+    return render_template("index.html")
 
-    category4 = df_initial["Market type"].tolist()
-    values4 = df_initial["Price"].round(1).tolist()
-
-    df = (get_clean_values(df))
-    df = df.dropna()
-
-
-
-    list_of_districts = ["Bemowo", "Białołęka", "Bielany", "Mokotów", "Ochota", "Praga-Południe",
-                         "Praga-Północ", "Targówek","Ursus", "Ursynów", "Ursynów", "Wawer", "Wesoła", "Wilanów", "Wola", "Włochy", "Śródmieście",
-                         "Żoliborz"]
-
-    df = df[df['District'].isin(list_of_districts)]
-    df["District"].replace({"Praga-Południe": "Praga Południe", "Praga-Północ": "Praga Północ"}, inplace=True)
-    df3 = df.copy()
-    total_average_price = df["Price"].mean() / 1000
-    total_average_price = total_average_price.round(1)
-    total_rows = df["Price"].count()
-    total_average_surface = df["Surface"].mean().round(1)
-    total_average_charges = df["Monthly charges"].mean().round(1)
-    total_average_construcion = int(df["Construction year"].mean().round(0))
-
-    df = df.groupby("District")["Price", "Surface", "Monthly charges", "Construction year"].median().reset_index()
-
-    df = df.sort_values("Price")
-    districts1 = df["District"].tolist()
-    districts1 = districts1
-    values1 = df["Price"]/1000
-    values1 = values1.tolist()
-    values1 = values1
-    values1 = [int(i) for i in values1]
-
-    df2 = df.sort_values("Surface").copy()
-    districts2 = df2["District"].tolist()
-    values2 = df2["Surface"].round()
-    values2 = values2.tolist()
-    values2 = [int(i) for i in values2]
-
-    df3['Surface_category'] = df3['Surface'].apply(lambda x: '<20m2' if x < 20 else
-                                                    ('20-40m2' if x < 40 else
-                                                     ('40-60m2' if x < 60 else
-                                                      ('60-80m2' if x < 80 else
-                                                       ('80-100m2' if x < 100 else
-                                                        ('100-120m2' if x < 120 else ">120m2"))))))
+@app.route("/map/")
+def map():
+   # Super strange method to use non embedded plotly graphs without running Dash app
+    districts_url = os.path.join(app_root, "static/geojson/warszawa-dzielnice.geojson")
+    map_data_url = os.path.join(app_root, "database/dane_map.csv")
+    # Loading both GeoJSON and data
+    f = open(districts_url, encoding='utf-8')
+    data = json.load(f)
 
 
-    df3 = df3.groupby("Surface_category")["Price"].count().reset_index()
+    df = pd.read_csv(map_data_url, dtype={"name": str})
 
-    df3['sort'] = df3['Surface_category'].apply(lambda x: '1' if x == "<20m2" else
-                                                ('2' if x == "20-40m2" else
-                                                 ('3' if x == "40-60m2" else
-                                                  ('4' if x == "60-80m2" else
-                                                   ('5' if x == "80-100m2" else
-                                                    ('6' if x == "100-120m2" else
-                                                     '7'))))))
+   # Plotting Plotly Choropleth map
+    fig = px.choropleth_mapbox(df, geojson=data, locations='name', featureidkey="properties.name", color='value',
+                               color_continuous_scale="turbo",
+                               range_color=(-0.2, 1),
+                               mapbox_style="carto-positron",
+                               zoom=9.0, center={"lat": 52.2402, "lon": 21.0},
+                               opacity=0.35,
+                               # Do not change width and height, it is possible down in code
+                               labels={'value': 'Value', "name": "District"},
+                               )
 
-    df3 = df3.sort_values("sort").copy()
-    categories3 = df3["Surface_category"].tolist()
-    values3 = df3["Price"].tolist()
+    fig.update_traces(hovertemplate=None)
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, hovermode="x")
+
+   # Instead of running dash app, current plot is saved as HTML, then some tags like <head> and <body>
+   # are being removed. Then navbar and other divs are being added around generated code.
+
+    map_url = os.path.join(app_root, "templates/map.html")
+
+    fig.write_html(map_url)
+
+    with open(map_url, "r", encoding='utf-8') as f:
+        text = f.read()
+    f.close()
+    text = text[52:-15]
+    text = """{% extends "layout.html" %}"
+    {% set active_page = "Map" %}
 
 
-    return render_template("index.html",
-                           total_average_price=total_average_price,
-                           total_average_surface=total_average_surface,
-                           total_average_charges=total_average_charges,
-                           total_average_construcion=total_average_construcion,
-                           total_rows=total_rows,
-                           districts1=districts1,
-                           values1=values1,
-                           districts2=districts2,
-                           values2=values2,
-                           categories3=categories3,
-                           values3=values3,
-                           category4=category4,
-                           values4=values4
-                           )
+    {% block body %}
+          
+    <div class="container-fluid"> 
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Choropleth map by Warsaw district</h1>
+    </div>
+    <div class="col-xl-12 col-lg-8" >
+    <div class="card shadow mb-4">
+    <div   class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 id="abc" class="m-0 font-weight-bold text-dark"> Sale price in Warsaw by district</h6>
+    </div>
+    """ + text + """
+    
+    </div>
 
+  
+    
+    </div>
+    </div>
+    
+    {% endblock %}
+    """
 
-@app.route("/map_price/", methods=['GET','POST'])
-def map_price():
-    choropleth(value="price")
-    return render_template("file_map.html")
+    # Change of height and width of plot
+    #text = text.replace('height":600', 'height":600')
+    #text = text.replace('width":1340', 'width":1340')
+    file_map_url = os.path.join(app_root, "templates/file_map.html")
 
-@app.route("/map_surface/", methods=['GET','POST'])
-def map_surface():
-    choropleth(value="surface")
+    with open(file_map_url, "w") as file:
+        file.write(text)
+        file.close()
+
     return render_template("file_map.html")
 
 @app.route("/pricing_tool/", methods=['GET','POST'])
@@ -186,18 +168,17 @@ def pricing_tool():
 
     return render_template("pricing_tool.html", valuation=valuation_str, valuation_sqm = valuation_sqm_str, render_charts = render_charts)
 
-@app.route("/scraper_sale/", methods=['GET', 'POST'])
+@app.route("/scraper_sale/")
 def scraper_sale():
-    offers_card = "n/a"
-    price_card = "n/a"
-    district_card = "n/a"
-    surface_card = "n/a"
-    save_mode = ""
+    return render_template("scraper_sale.html")
 
-    file_download_file = os.path.join(app_root, "static\Scraped_data.xlsx.csv")
-    print((file_download_file))
+
+@app.route("/scraper_rental/", methods=['GET', 'POST'])
+def scraper_rental():
+
+
     # Create the pandas DataFrame
-    df = pd.DataFrame(columns=['Price',
+    df = pd.DataFrame( columns=['Price',
                              'Title',
                              'Adress',
                              'Offer number',
@@ -216,7 +197,7 @@ def scraper_sale():
                              'Scraping date',
                              'Links'])
 
-    # Executed after button click
+    #Executed after button click
     if request.method == "POST":
         offers_to_scrape = request.form['select1']
         sleep_time = request.form['select2']
@@ -420,29 +401,16 @@ def scraper_sale():
                     continue
 
         if save_mode == 'excel':
-            df.to_csv(file_download_file, encoding='utf-8-sig')
-            print(file_download_file)
-        # Data preparation for card display
-        clean_df = get_clean_values(df)
-        offers_card = len(clean_df.index)
-        price_card = int(clean_df["Price"].mean() / 1000)
-        district_card = len(set(clean_df["District"]))
-        surface_card = clean_df["Surface"].mean()
-        surface_card = round(surface_card,1)
+            print("sdfsdfsdfsd")
+            df.to_csv('Scraped_data.xlsx.csv', encoding='utf-8-sig')
 
-    return render_template("scraper_sale.html",
+    return render_template("scraper_rental.html",
                            tables=[df.to_html(justify="right",
                                    classes='table table-bordered',
                                    table_id='dataTables',
                                    render_links=True,
                                    index=False,
-                                   col_space = "200px").replace('<td>', '<td align="right">')],
-                           offers_card=offers_card,
-                           price_card=price_card,
-                           district_card=district_card,
-                           surface_card=surface_card,
-                           save_mode=save_mode,
-                           file_download_file=file_download_file)
+                                   col_space = "200px").replace('<td>', '<td align="right">')])
 
 
 # No caching at all for API endpoints.
