@@ -132,7 +132,9 @@
                 </div>
                 <div class="card-body">
                     <div class="text-center">
+                    {% if render_charts == True %}
                         <img class="img-fluid" style="width: 50rem;" src="{{ url_for('static', filename='img/hist_building_type.png') }}">
+                    {% endif %}
                     </div>
                     <!---
                     <p>Description here</p>
@@ -147,7 +149,9 @@
                 </div>
                 <div class="card-body">
                     <div class="text-center">
+                    {% if render_charts == True %}
                         <img class="img-fluid" style="width: 50rem;" src="{{ url_for('static', filename='img/hist_property_condition.png') }}">
+                    {% endif %}
                     </div>
                 </div>
             </div>

@@ -1,5 +1,7 @@
 from mysql.connector import connect, Error
 import sqlalchemy as db
+import apt_valuation
+import pandas as pd
 
 try:
     connection = connect(host="46.101.184.189",user="remote_user",password="pyth0nproj",database="pythonproj")
@@ -27,4 +29,7 @@ conn = engine.connect()
 print(conn)
 result = conn.execute("SHOW TABLES IN pythonproj").fetchall()
 print(result)
-print("Program complete")
+
+offers = pd.read_excel("database/scraped_data_rental.xlsx")
+
+print(offers.head)
