@@ -106,6 +106,13 @@ def get_clean_values(offers, user_input = False):
 
     return clean_values
 
+def get_clean_df(all_vals):
+    clean_vals = get_clean_values(all_vals)
+
+    diff_cols = all_vals.columns.difference(clean_vals.columns)
+    clean_df = pd.merge(all_vals[diff_cols], clean_vals, left_index=True, right_index=True, how="inner")
+    return clean_df
+
 if __name__ == "__main__":
     offers_excel = pd.read_excel("database/scraped_data_rental.xlsx")
     offers_clean = get_clean_values(offers_excel)

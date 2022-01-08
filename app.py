@@ -16,8 +16,8 @@ import os
 app = Flask(__name__)
 app.secret_key = 'secret key'
 import apt_valuation as apt
-from apt_valuation import get_clean_values
 from maps import *
+from database import *
 
 app_root =  os.path.realpath(os.path.dirname(__file__))
 
@@ -51,11 +51,11 @@ def index():
     df["District"].replace({"Praga-Południe": "Praga Południe", "Praga-Północ": "Praga Północ"}, inplace=True)
     df3 = df.copy()
     total_average_price = df["Price"].mean() / 1000
-    total_average_price = total_average_price.round(1)
+    total_average_price = round(total_average_price,1)
     total_rows = df["Price"].count()
-    total_average_surface = df["Surface"].mean().round(1)
-    total_average_charges = df["Monthly charges"].mean().round(1)
-    total_average_construcion = int(df["Construction year"].mean().round(0))
+    total_average_surface = round(df["Surface"].mean(),1)
+    total_average_charges = round(df["Monthly charges"].mean(),1)
+    total_average_construcion = int(round(df["Construction year"].mean(),0))
 
     df = df.groupby("District")["Price", "Surface", "Monthly charges", "Construction year"].median().reset_index()
 
@@ -152,12 +152,13 @@ def pricing_tool():
 
         plt.style.use("seaborn")
 
-        database_path = os.path.join(app_root, "database/scraped_data_rental.xlsx")
-        database = apt.load_data(database_path)
+        db_df = load_df()
+        db_df['Price per sqm'] = db_df['Price'] / db_df['Surface']
+        print(db_df.columns)
 
         plt.ioff()
         fig, ax1 = plt.subplots()
-        ax1.hist(np.clip(database.loc[database["Building type"] == apt_df["Building type"][0],"Price per sqm"],5000,25000),density=True,bins=20)
+        ax1.hist(np.clip(db_df.loc[db_df["Building type"] == apt_df["Building type"][0],"Price per sqm"],5000,25000),density=True,bins=20)
         ax1.title.set_text("Building type")
         ax1.set_xlabel("Price per sqm (PLN)")
         ax1.set_yticks([])
@@ -169,7 +170,7 @@ def pricing_tool():
         plt.close(fig)
 
         fig, ax1 = plt.subplots()
-        ax1.hist(np.clip(database.loc[database["Property condition"] == apt_df["Property condition"][0],"Price per sqm"],5000,25000),density=True,bins=20)
+        ax1.hist(np.clip(db_df.loc[db_df["Property condition"] == apt_df["Property condition"][0],"Price per sqm"],5000,25000),density=True,bins=20)
         ax1.title.set_text("Property condition")
         ax1.set_xlabel("Price per sqm (PLN)")
         ax1.set_yticks([])
