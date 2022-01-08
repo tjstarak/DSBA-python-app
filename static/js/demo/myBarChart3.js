@@ -32,13 +32,13 @@ var ctx = document.getElementById("myBarChart3");
 var myBarChart = new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: ["<20sqm", "20-40m2", "40-60m2", "60-80m2", "80-100m2", ">100m2"],
+    labels: categories3,
     datasets: [{
       label: "Number of apartments",
       backgroundColor: "#1cc88a",
       hoverBackgroundColor: "#17a673",
       borderColor: "rgba(234, 236, 244, 1)",
-      data: [4215, 5312, 6251, 7841, 9821, 14984],
+      data: values3,
     }],
   },
   options: {
@@ -63,12 +63,12 @@ var myBarChart = new Chart(ctx, {
         ticks: {
           maxTicksLimit: 6
         },
-        maxBarThickness: 25,
+        maxBarThickness: 35,
       }],
       yAxes: [{
         ticks: {
           min: 0,
-          max: 15000,
+          max: 190,
           maxTicksLimit: 5,
           padding: 10,
           // Include a dollar sign in the ticks

@@ -32,13 +32,13 @@ var ctx = document.getElementById("myBarChart2");
 var myBarChart = new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: ["Bielany", "Białołęka", "Wola", "Ochota", "Mokotów", "Wilanów"],
+    labels: districts2,
     datasets: [{
-      label: "Price",
+      label: "Surface",
       backgroundColor: "#1cc88a",
       hoverBackgroundColor: "#17a673",
       borderColor: "rgba(234, 236, 244, 1)",
-      data: [4215, 5312, 6251, 7841, 9821, 14984],
+      data: value2,
     }],
   },
   options: {
@@ -61,19 +61,19 @@ var myBarChart = new Chart(ctx, {
           drawBorder: false
         },
         ticks: {
-          maxTicksLimit: 6
+          maxTicksLimit: 18
         },
-        maxBarThickness: 25,
+        maxBarThickness: 35,
       }],
       yAxes: [{
         ticks: {
           min: 0,
-          max: 15000,
+          max: 76,
           maxTicksLimit: 5,
           padding: 10,
           // Include a dollar sign in the ticks
           callback: function(value, index, values) {
-            return 'PLN ' + number_format(value);
+            return number_format(value) + 'm2';
           }
         },
         gridLines: {
@@ -103,7 +103,7 @@ var myBarChart = new Chart(ctx, {
       callbacks: {
         label: function(tooltipItem, chart) {
           var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-          return datasetLabel + ': PLN  ' + number_format(tooltipItem.yLabel) ;
+          return datasetLabel + ': ' + number_format(tooltipItem.yLabel) + 'm2' ;
         }
       }
     },
