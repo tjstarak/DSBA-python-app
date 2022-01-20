@@ -30,15 +30,15 @@ app_root =  os.path.realpath(os.path.dirname(__file__))
 
 @app.route("/index/")
 def index():
-    database_path = os.path.join(app_root, "database/scraped_data_rental.csv")
-    df = pd.read_csv(database_path)
+    # Importing data from mySQL
+    df = load_df()
     df_initial = df.groupby("Market type")["Price"].count().reset_index()
     df_initial["Price"] = df_initial["Price"]/ df_initial["Price"].sum() *100
 
     category4 = df_initial["Market type"].tolist()
     values4 = df_initial["Price"].round(1).tolist()
 
-    df = (get_clean_values(df))
+#   df = (get_clean_values(df))
     df = df.dropna()
 
 
@@ -414,7 +414,6 @@ def scraper_sale():
 
                 offers_to_scrape_current = offers_to_scrape_current + 1
                 time.sleep(int(sleep_time))
-                print(sleep_time)
                 if offers_to_scrape_current == int(offers_to_scrape):
                     break
                 else:
@@ -422,7 +421,9 @@ def scraper_sale():
 
         if save_mode == 'excel':
             df.to_csv(file_download_file, encoding='utf-8-sig')
-            print(file_download_file)
+        else:
+            append_df(get_clean_values(df))
+
         # Data preparation for card display
         clean_df = get_clean_values(df)
         offers_card = len(clean_df.index)

@@ -18,15 +18,16 @@ app.secret_key = 'secret key'
 import apt_valuation as apt
 from database import get_clean_values
 from maps import *
+from database import *
 
 app_root =  os.path.realpath(os.path.dirname(__file__))
 
 def choropleth(value="price"):
     # method to use non embedded plotly graphs without running Dash app
     districts_url = os.path.join(app_root, "static/geojson/warszawa-dzielnice.geojson")
-    map_data_url = os.path.join(app_root, "database/scraped_data_rental.csv")
-    df = pd.read_csv(map_data_url)
-    df = (get_clean_values(df))
+
+    # Importing data from database
+    df = load_df()
     df = df.dropna()
 
     if value == "price":
