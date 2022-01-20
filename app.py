@@ -32,13 +32,12 @@ app_root =  os.path.realpath(os.path.dirname(__file__))
 def index():
     # Importing data from mySQL
     df = load_df()
+    df = df[df['Price'].notna()]
     df_initial = df.groupby("Market type")["Price"].count().reset_index()
     df_initial["Price"] = df_initial["Price"]/ df_initial["Price"].sum() *100
-
+    total_rows = df.shape[0]
     category4 = df_initial["Market type"].tolist()
     values4 = df_initial["Price"].round(1).tolist()
-
-#   df = (get_clean_values(df))
     df = df.dropna()
 
 
@@ -52,7 +51,7 @@ def index():
     df3 = df.copy()
     total_average_price = df["Price"].mean() / 1000
     total_average_price = round(total_average_price,1)
-    total_rows = df["Price"].count()
+
     total_average_surface = round(df["Surface"].mean(),1)
     total_average_charges = round(df["Monthly charges"].mean(),1)
     total_average_construcion = int(round(df["Construction year"].mean(),0))
@@ -423,7 +422,8 @@ def scraper_sale():
             df.to_csv(file_download_file, encoding='utf-8-sig')
         else:
             append_df(get_clean_values(df))
-
+        abc = load_df()
+        print(abc.shape)
         # Data preparation for card display
         clean_df = get_clean_values(df)
         offers_card = len(clean_df.index)
