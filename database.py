@@ -51,10 +51,10 @@ def get_clean_df(all_vals):
     clean_df = pd.merge(all_vals[diff_cols], clean_vals, left_index=True, right_index=True, how="inner")
     return clean_df
 
-def load_df():
+def load_df(source = 'app_tbl'):
     eng = db.create_engine(engine_string)
     conn = eng.connect()
-    df = pd.read_sql('app_tbl', conn)
+    df = pd.read_sql(source, conn)
     conn.close()
     return df
 
@@ -65,7 +65,6 @@ def append_df(df):
     df.to_sql('app_tbl', conn, if_exists='append')
 
     conn.close()
-    return None
 
 def reset_db():
     eng = db.create_engine(engine_string)
@@ -79,4 +78,19 @@ def reset_db():
     conn.execute('INSERT INTO app_tbl SELECT * FROM backup_tbl')
     
     conn.close()
-    return None
+
+def create_norm_tables(source = 'backup_tbl'):
+    df = load_df(source)
+    tbl_list = ['Building type', 'Heating type', 'Market type', 'Ownership', 'Property condition', 'District'] 
+    pass
+
+
+def main():
+    df = load_df()
+    tbl_list = ['Building type', 'Heating type', 'Ownership', 'Property condition', 'District'] 
+    tbl_names = ['building', 'heating', 'ownership', 'property_condition', 'district']
+    tbl_dict = dict(zip(tbl_list, tbl_names))
+    print(tbl_dict)
+
+if __name__ == '__main__':
+    main()
