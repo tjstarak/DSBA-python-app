@@ -63,7 +63,6 @@ def value_apartment(apt_params, val_model):
     model_features = val_model.get_booster().feature_names
     # Drop all params not featured in the model
     apt_params_checked = apt_params[apt_params.columns.intersection(model_features)]
-    print(apt_params_checked)
     valuation = val_model.predict(apt_params_checked)
     return valuation
 
