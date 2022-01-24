@@ -31,7 +31,7 @@ app_root =  os.path.realpath(os.path.dirname(__file__))
 @app.route("/index/")
 def index():
     # Importing data from mySQL
-    df = load_df()
+    df = load_norm_df()
     df = df[df['Price'].notna()]
     df_initial = df.groupby("Market type")["Price"].count().reset_index()
     df_initial["Price"] = df_initial["Price"]/ df_initial["Price"].sum() *100
@@ -151,7 +151,7 @@ def pricing_tool():
 
         plt.style.use("seaborn")
 
-        db_df = load_df()
+        db_df = load_norm_df()
         db_df['Price per sqm'] = db_df['Price'] / db_df['Surface']
         print(db_df.columns)
 
@@ -421,8 +421,8 @@ def scraper_sale():
         if save_mode == 'excel':
             df.to_csv(file_download_file, encoding='utf-8-sig')
         else:
-            append_df(get_clean_values(df))
-        abc = load_df()
+            append_df(normalize_df(get_clean_df(df)))
+        abc = load_norm_df()
         print(abc.shape)
         # Data preparation for card display
         clean_df = get_clean_values(df)
