@@ -27,7 +27,7 @@ def choropleth(value="price"):
     districts_url = os.path.join(app_root, "static/geojson/warszawa-dzielnice.geojson")
 
     # Importing data from database
-    df = load_df()
+    df = load_norm_df() # edit
     df = df.dropna()
 
     if value == "price":

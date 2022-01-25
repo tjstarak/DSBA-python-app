@@ -101,7 +101,7 @@ def initialize_db(spec, name, foreign_keys = None):
                  f'PRIMARY KEY (id) {parsed_foreign_key_spec})')
     conn.close()
     
-def append_df(df, name = 'app_tbl', ix_name = 'id'):
+def append_df(df, name = 'app_norm_tbl', ix_name = 'id'):
     eng = db.create_engine(engine_string)
     conn = eng.connect()
     result = conn.execute(f'SELECT column_name FROM information_schema.columns WHERE table_schema = "pythonproj"'\
@@ -111,14 +111,7 @@ def append_df(df, name = 'app_tbl', ix_name = 'id'):
     if ix_name in col_list: col_list.remove('id')
     col_list_esc = [f'`{x}`' for x in col_list]
     col_string = ", ".join(col_list_esc)
-
-    ############################# Tutaj się bawiłem
-    print(col_list)
-    print(df.columns)
-    insert_df = df[['Adress', 'Building type', 'Construction year', 'District', 'Floor', 'Heating type', 'Links', 'Market type', 'Monthly charges', 'Number of floors in building', 'Number of rooms', 'Offer number', 'Ownership', 'Price', 'Property condition', 'Scraping date', 'Surface', 'Title', 'Windows type']]
-
-    insert_df = insert_df.replace({'n/a': None})
-    ############################ Tutaj się skończyłem bawić
+    insert_df = df.loc[:, col_list].replace({np.nan : None})
 
     placeholders = ", ".join(['%s' for x in col_list])
     insert_string = f'({placeholders})'
@@ -131,10 +124,10 @@ def load_norm_tables(tbl_dict = None):
     conn = eng.connect()
     if tbl_dict is None:
         tbl_dict = {'Building type' : 'building',
-                        'Heating type' : 'heating',
-                        'Ownership' : 'ownership',
-                        'Property condition' : 'prop_cond',
-                        'District' : 'district' }
+                    'Heating type' : 'heating',
+                    'Ownership' : 'ownership',
+                    'Property condition' : 'prop_cond',
+                    'District' : 'district' }
     norm_tbl_dict = {}
     for col, tbl in tbl_dict.items():
         df = pd.read_sql(tbl, conn)
@@ -172,14 +165,17 @@ def reset_norm_tables(tbl_dict, source = 'backup_tbl'):
                      f'SELECT DISTINCT {source}.`{col}` FROM {source}')
     conn.close()
 
-def normalize_df(df):
+def normalize_df(df, initialize=False):
     norm_tbls, norm_dict = load_norm_tables()
     for col, norm_tbl in norm_tbls.items():
         norm_key = norm_tbl.columns.values.tolist()[1]
         df = pd.merge(df, norm_tbl, how='left',
             left_on=col, right_on=norm_key, suffixes=('', '_y'))
         df.drop(columns=[col, f'{norm_key}'], inplace=True)
-        df.rename(columns={'id_y':f'{norm_dict[col]}_id'}, inplace=True)
+        if initialize:
+            df.rename(columns={'id_y':f'{norm_dict[col]}_id'}, inplace=True)
+        else:
+            df.rename(columns={'id':f'{norm_dict[col]}_id'}, inplace=True)
     return df
 
 def main():
