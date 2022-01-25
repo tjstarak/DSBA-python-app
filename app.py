@@ -260,7 +260,7 @@ def scraper_sale():
         for page in range(number_of_pages):
 
             starting_url = f"https://www.otodom.pl/pl/oferty/sprzedaz/mieszkanie/warszawa?market=ALL&ownerTypeSingleSelect=ALL&distanceRadius=0&description=do+zamieszkania&locations=%5Bcities_6-26%5D&limit=72&page={int(page)+1}"
-            html_text = requests.get(starting_url).text
+            html_text = requests.get(starting_url, verify=False).text
             soup = BeautifulSoup(html_text, "lxml")
 
 
@@ -278,7 +278,7 @@ def scraper_sale():
             # Looping through all links on list page - list_of_links
             for i, link in enumerate(list_of_links):
                 url = list_of_links[i]
-                html_text = requests.get(url).text
+                html_text = requests.get(url, verify=False).text
                 soup = BeautifulSoup(html_text, "lxml")
 
                 # Scraping single values from single offer page
