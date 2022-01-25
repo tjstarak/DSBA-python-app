@@ -106,11 +106,20 @@ def append_df(df, name = 'app_tbl', ix_name = 'id'):
     conn = eng.connect()
     result = conn.execute(f'SELECT column_name FROM information_schema.columns WHERE table_schema = "pythonproj"'\
                           f'AND table_name = "{name}"')
+
     col_list = [row[0] for row in result]
     if ix_name in col_list: col_list.remove('id')
     col_list_esc = [f'`{x}`' for x in col_list]
     col_string = ", ".join(col_list_esc)
-    insert_df = df.loc[:, col_list].replace({np.nan : None})
+
+    ############################# Tutaj się bawiłem
+    print(col_list)
+    print(df.columns)
+    insert_df = df[['Adress', 'Building type', 'Construction year', 'District', 'Floor', 'Heating type', 'Links', 'Market type', 'Monthly charges', 'Number of floors in building', 'Number of rooms', 'Offer number', 'Ownership', 'Price', 'Property condition', 'Scraping date', 'Surface', 'Title', 'Windows type']]
+
+    insert_df = insert_df.replace({'n/a': None})
+    ############################ Tutaj się skończyłem bawić
+
     placeholders = ", ".join(['%s' for x in col_list])
     insert_string = f'({placeholders})'
     insert_data = list(insert_df.itertuples(index=False, name=None))

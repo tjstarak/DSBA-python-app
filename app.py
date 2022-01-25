@@ -195,7 +195,7 @@ def scraper_sale():
     save_mode = ""
 
     file_download_file = os.path.join(app_root, "static\Scraped_data.xlsx.csv")
-    print((file_download_file))
+
     # Create the pandas DataFrame
     df = pd.DataFrame(columns=['Price',
                              'Title',
@@ -243,6 +243,7 @@ def scraper_sale():
         scraped_building_type = []
         scraped_market_type = []
         scraped_floor = []
+        scraped_floor = []
         scraped_total_floors = []
         scraped_window_type = []
         scraped_heating = []
@@ -258,18 +259,19 @@ def scraper_sale():
         # Pagination loop, for now page number is hard coded
         for page in range(number_of_pages):
 
-            starting_url = "https://www.otodom.pl/pl/oferty/sprzedaz/mieszkanie/warszawa?description=do+zamieszkania&priceMin=10000&distanceRadius=0&market=ALL&page=" + str(number_of_pages) + "&limit=72&locations=%5Bcities_6-26%5D&by=DEFAULT&direction=DESC"
+            starting_url = f"https://www.otodom.pl/pl/oferty/sprzedaz/mieszkanie/warszawa?market=ALL&ownerTypeSingleSelect=ALL&distanceRadius=0&description=do+zamieszkania&locations=%5Bcities_6-26%5D&limit=72&page={int(page)+1}"
             html_text = requests.get(starting_url).text
             soup = BeautifulSoup(html_text, "lxml")
 
+
             list_of_links = []
             # Creating list with all links on the first page
-            for a in soup.find_all('a', href=True, class_="css-jf4j3r es62z2j27"):
+            for a in soup.find_all('a', href=True, class_="css-1aeekh1 es62z2j27"):
+
                 full_link = "https://www.otodom.pl" + str(a['href'])
                 if full_link not in all_links:
                     all_links.append(full_link)
                     list_of_links.append(full_link)
-                    print(full_link)
                 else:
                     continue
 
@@ -299,7 +301,7 @@ def scraper_sale():
                 # Address
                 adress = soup.find("a", "e1nbpvi60 css-12w6h8t e1enecw71")
                 scraped_adress.append(adress.text)
-                print(adress.text)
+
 
                 # Day when scraped
                 scraped_scraping_date.append(date.today())
@@ -319,6 +321,7 @@ def scraper_sale():
 
                     if a['title'] == "Powierzchnia":
                         scraped_surface.append(v.text)
+
 
 
                     elif a['title'] == "Liczba pokoi":
@@ -405,25 +408,32 @@ def scraper_sale():
                              'Ownership',
                              'Scraping date',
                              'Links'])
-
-
+                print(df)
 
 
                 # Waiting before next page request
 
                 offers_to_scrape_current = offers_to_scrape_current + 1
+
                 time.sleep(int(sleep_time))
+
                 if offers_to_scrape_current == int(offers_to_scrape):
+
                     break
                 else:
                     continue
 
+
+
         if save_mode == 'excel':
             df.to_csv(file_download_file, encoding='utf-8-sig')
         else:
+
             append_df(normalize_df(get_clean_df(df)))
-        abc = load_norm_df()
-        print(abc.shape)
+            #normalize_df(get_clean_df(df))
+
+
+
         # Data preparation for card display
         clean_df = get_clean_values(df)
         offers_card = len(clean_df.index)
